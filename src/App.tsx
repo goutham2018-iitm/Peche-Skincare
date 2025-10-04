@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 import BackToTop from "./components/BacktoToTop"; 
 import AdminDashboard from "./components/AdminDashboard";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-
+import { Analytics } from "@vercel/analytics/react"
 const queryClient = new QueryClient();
 
 const Layout = () => {
@@ -42,6 +42,7 @@ const App = () => (
           </Route>
         </Routes>
       </BrowserRouter>
+      <Analytics />
       <SpeedInsights />
     </TooltipProvider>
   </QueryClientProvider>
