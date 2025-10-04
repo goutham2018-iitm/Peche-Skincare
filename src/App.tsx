@@ -9,6 +9,7 @@ import ProductPage from "./pages/ProductPage";
 import NotFound from "./pages/NotFound";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BacktoToTop"; 
+import AdminDashboard from "./components/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/product" element={<ProductPage />} />
             {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
             <Route path="*" element={<NotFound />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>
