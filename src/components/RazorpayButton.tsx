@@ -6,6 +6,8 @@ interface RazorpayButtonProps {
   productName: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -51,7 +53,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     
     try {
       // 1️⃣ Create order on backend
-      const orderRes = await fetch("http://localhost:4000/create-order", {
+      const orderRes = await fetch(`${API_URL}/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount }),
@@ -76,7 +78,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
             const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
               response;
 
-            const verifyRes = await fetch("http://localhost:4000/verify-payment", {
+            const verifyRes = await fetch(`${API_URL}/verify-payment`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -113,7 +115,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
             
             // Record cancelled payment
             try {
-              await fetch("http://localhost:4000/payment-failed", {
+              await fetch(`${API_URL}/payment-failed`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -147,7 +149,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         
         // Record failed payment
         try {
-          await fetch("http://localhost:4000/payment-failed", {
+          await fetch(`${API_URL}/payment-failed`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

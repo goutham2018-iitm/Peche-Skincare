@@ -37,6 +37,8 @@ interface Stats {
   successRate: string;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const AdminDashboard: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -67,7 +69,7 @@ const AdminDashboard: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:4000/admin/login", {
+      const res = await fetch(`${API_URL}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -94,7 +96,7 @@ const AdminDashboard: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:4000/admin/verify-otp", {
+      const res = await fetch(`${API_URL}/admin/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -118,7 +120,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchPayments = async () => {
     try {
-      const res = await fetch("http://localhost:4000/admin/payments", {
+      const res = await fetch(`${API_URL}/admin/payments`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -132,7 +134,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("http://localhost:4000/admin/stats", {
+      const res = await fetch(`${API_URL}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -144,7 +146,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
+   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     setToken(null);
     setIsLoggedIn(false);

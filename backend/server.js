@@ -15,7 +15,29 @@ app.get("/", (req, res) => {
   res.send("🔥 Razorpay backend is running!");
 });
 
-app.use(cors());
+// CORS configuration - allow both localhost and production frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:8080',  
+  'https://pechepurpose.co',
+  'https://www.pechepurpose.co'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
 app.use(bodyParser.json());
 
 // Razorpay keys from .env
