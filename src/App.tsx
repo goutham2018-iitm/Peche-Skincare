@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BacktoToTop"; 
 import AdminDashboard from "./components/AdminDashboard";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           </Route>
         </Routes>
       </BrowserRouter>
+      <SpeedInsights />
     </TooltipProvider>
   </QueryClientProvider>
 );
