@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
 import { ShoppingCart, ArrowDown, Loader2, Mail, Phone, X } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface RazorpayButtonProps {
   amount: number;
@@ -26,28 +27,63 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   };
 
   const handleSubmit = () => {
-    const newErrors = { email: "", phone: "" };
+    // Clear previous errors
+    setErrors({ email: "", phone: "" });
     
-    if (!email) {
-      newErrors.email = "Email is required";
+    let hasError = false;
+    let errorMessage = "";
+
+    // Validate email
+    if (!email.trim()) {
+      setErrors(prev => ({ ...prev, email: "Email is required" }));
+      errorMessage = "Please enter your email address";
+      hasError = true;
     } else if (!validateEmail(email)) {
-      newErrors.email = "Invalid email format";
+      setErrors(prev => ({ ...prev, email: "Invalid email format" }));
+      errorMessage = "Please enter a valid email address";
+      hasError = true;
     }
     
-    if (!phone) {
-      newErrors.phone = "Phone number is required";
-    } else if (!validatePhone(phone)) {
-      newErrors.phone = "Invalid phone number (10 digits, starting with 6-9)";
+    // Only check phone if email is valid
+    if (!hasError) {
+      if (!phone.trim()) {
+        setErrors(prev => ({ ...prev, phone: "Phone number is required" }));
+        errorMessage = "Please enter your phone number";
+        hasError = true;
+      } else if (!validatePhone(phone)) {
+        setErrors(prev => ({ ...prev, phone: "Invalid phone number (10 digits, starting with 6-9)" }));
+        errorMessage = "Invalid phone number. Must be 10 digits starting with 6-9";
+        hasError = true;
+      }
+    }
+
+    // Show single toast error if any validation failed
+    if (hasError) {
+      toast.error(errorMessage, {
+        style: {
+          background: '#FFF5F5',
+          color: '#C53030',
+          border: '1px solid #FED7D7',
+          borderRadius: '12px',
+          padding: '16px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+        iconTheme: {
+          primary: '#C53030',
+          secondary: '#FFF5F5',
+        },
+        duration: 3000,
+      });
+      return;
     }
     
-    setErrors(newErrors);
-    
-    if (!newErrors.email && !newErrors.phone) {
-      setShowModal(false);
-      handlePayment();
-    }
+    // If no errors, proceed with payment
+    setShowModal(false);
+    handlePayment();
   };
 
+  // ... (rest of the handlePayment function remains the same)
   const handlePayment = async () => {
     setIsLoading(true);
     
@@ -94,16 +130,71 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
             const verifyData = await verifyRes.json();
             
             if (verifyData.success) {
-              alert("✅ Payment Successful! Your purchase has been recorded.");
-              console.log("Payment saved:", verifyData.data);
-              // TODO: Redirect to download page or success page
-              // window.location.href = '/download?payment_id=' + razorpay_payment_id;
+              toast.dismiss();
+              setTimeout(() => {
+                toast.success("Payment successful! 🎉 Check your email for the download link", {
+                  id: 'payment-success',
+                  style: {
+                    background: 'linear-gradient(135deg, #FFF5F0 0%, #FFE8DC 100%)',
+                    color: '#5D3A29',
+                    border: '1px solid #F4C7B0',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    boxShadow: '0 4px 12px rgba(212, 130, 101, 0.15)',
+                  },
+                  iconTheme: {
+                    primary: '#D48265',
+                    secondary: '#FFF5F0',
+                  },
+                  duration: 5000,
+                });
+              }, 200);
             } else {
-              alert("❌ Payment Verification Failed: " + verifyData.message);
+              toast.dismiss();
+              setTimeout(() => {
+                toast.error(`Payment verification failed: ${verifyData.message}`, {
+                  id: 'payment-verification-failed',
+                  style: {
+                    background: '#FFF5F5',
+                    color: '#C53030',
+                    border: '1px solid #FED7D7',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                  },
+                  iconTheme: {
+                    primary: '#C53030',
+                    secondary: '#FFF5F5',
+                  },
+                  duration: 4000,
+                });
+              }, 200);
             }
           } catch (error) {
             console.error("Verification error:", error);
-            alert("❌ Payment verification failed. Please contact support.");
+            toast.dismiss();
+            setTimeout(() => {
+              toast.error("Payment verification failed. Please contact support with your payment ID", {
+                id: 'payment-error',
+                style: {
+                  background: '#FFF5F5',
+                  color: '#C53030',
+                  border: '1px solid #FED7D7',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                },
+                iconTheme: {
+                  primary: '#C53030',
+                  secondary: '#FFF5F5',
+                },
+                duration: 5000,
+              });
+            }, 200);
           } finally {
             setIsLoading(false);
           }
@@ -113,7 +204,25 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
             setIsLoading(false);
             console.log("Payment modal closed by user - Payment cancelled");
             
-            // Record cancelled payment
+            toast.dismiss();
+            
+            setTimeout(() => {
+              toast("Payment cancelled. You can try again anytime! 💭", {
+                id: 'payment-cancelled',
+                style: {
+                  background: '#FFFBEB',
+                  color: '#92400E',
+                  border: '1px solid #FDE68A',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                },
+                icon: '⚠️',
+                duration: 3000,
+              });
+            }, 100);
+            
             try {
               await fetch(`${API_URL}/payment-failed`, {
                 method: "POST",
@@ -133,7 +242,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
             }
           }
         },
-        theme: { color: "#2563EB" },
+        theme: { color: "#D48265" },
         prefill: {
           email: email,
           contact: phone,
@@ -145,9 +254,28 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
       rzp.on('payment.failed', async function (response: any) {
         setIsLoading(false);
         console.error('Payment failed:', response.error);
-        alert(`Payment failed: ${response.error.description}`);
         
-        // Record failed payment
+        toast.dismiss();
+        setTimeout(() => {
+          toast.error(`Payment failed: ${response.error.description}. Please try again or contact support`, {
+            id: 'payment-failed',
+            style: {
+              background: '#FFF5F5',
+              color: '#C53030',
+              border: '1px solid #FED7D7',
+              borderRadius: '12px',
+              padding: '16px',
+              fontSize: '14px',
+              fontWeight: '500',
+            },
+            iconTheme: {
+              primary: '#C53030',
+              secondary: '#FFF5F5',
+            },
+            duration: 5000,
+          });
+        }, 200);
+        
         try {
           await fetch(`${API_URL}/payment-failed`, {
             method: "POST",
@@ -170,13 +298,56 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
       rzp.open();
     } catch (err) {
       console.error("Payment initiation error:", err);
-      alert("Failed to initiate payment. Please try again.");
+      toast.dismiss();
+      setTimeout(() => {
+        toast.error("Failed to initiate payment. Please check your connection and try again", {
+          id: 'payment-initiation-error',
+          style: {
+            background: '#FFF5F5',
+            color: '#C53030',
+            border: '1px solid #FED7D7',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '14px',
+            fontWeight: '500',
+          },
+          iconTheme: {
+            primary: '#C53030',
+            secondary: '#FFF5F5',
+          },
+          duration: 4000,
+        });
+      }, 200);
       setIsLoading(false);
     }
   };
 
   return (
     <>
+      {/* <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={12}
+        containerStyle={{
+          top: 80,
+          zIndex: 9999,
+        }}
+        toastOptions={{
+          className: '',
+          style: {
+            maxWidth: '500px',
+            minWidth: '300px',
+            zIndex: 9999,
+          },
+          success: {
+            duration: 5000,
+          },
+          error: {
+            duration: 4000,
+          },
+        }}
+      /> */}
+
       <button
         onClick={() => setShowModal(true)}
         disabled={isLoading}
@@ -196,28 +367,33 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         )}
       </button>
 
-      {/* User Details Modal */}
+      {/* User Details Modal - Fixed Design */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              Enter Your Details
-            </h2>
-            <p className="text-sm text-gray-600 mb-6">
-              We'll use this information to send your purchase confirmation and download link.
-            </p>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-primary to-primary/90 p-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-white">
+                  Enter Your Details
+                </h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-white hover:text-gray-200 transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <p className="text-primary-50 text-sm mt-2">
+                We'll use this information to send your purchase confirmation and download link.
+              </p>
+            </div>
 
-            <div className="space-y-4">
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
               {/* Email Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Email Address *
                 </label>
                 <div className="relative">
@@ -230,19 +406,23 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                       setErrors({ ...errors, email: "" });
                     }}
                     placeholder="your@email.com"
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                      errors.email ? "border-red-500" : "border-gray-300"
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                      errors.email 
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-200" 
+                        : "border-gray-200 focus:border-primary focus:ring-primary/20"
                     }`}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs font-medium flex items-center gap-1 mt-1">
+                    <span>⚠</span> {errors.email}
+                  </p>
                 )}
               </div>
 
               {/* Phone Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Phone Number *
                 </label>
                 <div className="relative">
@@ -259,23 +439,31 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                     }}
                     placeholder="9876543210"
                     maxLength={10}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                      errors.phone ? "border-red-500" : "border-gray-300"
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                      errors.phone 
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-200" 
+                        : "border-gray-200 focus:border-primary focus:ring-primary/20"
                     }`}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  <p className="text-red-500 text-xs font-medium flex items-center gap-1 mt-1">
+                    <span>⚠</span> {errors.phone}
+                  </p>
                 )}
+                <p className="text-gray-500 text-xs">
+                  Must be 10 digits starting with 6-9
+                </p>
               </div>
-            </div>
 
-            <button
-              onClick={handleSubmit}
-              className="w-full mt-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all"
-            >
-              Proceed to Payment
-            </button>
+              {/* Submit Button */}
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+              >
+                Proceed to Payment
+              </button>
+            </div>
           </div>
         </div>
       )}
