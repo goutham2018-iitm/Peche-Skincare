@@ -98,7 +98,7 @@ const ProductNavigation = () => {
     { name: "Modules", href: "#modules" },
     { name: "Five Bonuses", href: "#bonuses" },
     { name: "FAQ's", href: "#faq" },
-    { name: "Contact Us", href: "#contact" },
+    // { name: "Contact Us", href: "#contact" },
   ];
   const sparkVariants = {
     hidden: { scale: 0, opacity: 0 },
@@ -156,7 +156,7 @@ const ProductNavigation = () => {
           </div>
 
           {/* Enhanced Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+<div className="hidden md:flex flex-1 justify-center items-center space-x-8">
             {navItems.map((item, index) => (
               <a
                 key={item.name}
@@ -187,20 +187,7 @@ const ProductNavigation = () => {
             ))}
           </div>
 
-          {/* Enhanced CTA Button */}
-          <div className="hidden md:block">
-            <Button className="bg-primary hover:bg-primary-dark text-primary-foreground font-medium px-4 lg:px-6 text-sm lg:text-base shadow-glow hover:shadow-xl transition-all duration-500 hover-lift btn-3d magnetic relative overflow-hidden group">
-              <span className="relative z-10">Shop Now</span>
-
-              {/* Animated background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary-dark scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-
-              {/* Sparkle effect */}
-              <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transform -translate-x-1/2 -translate-y-1/2 animate-ping"></div>
-            </Button>
-          </div>
-
-          {/* Enhanced Mobile Menu Button */}
+ 
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-1.5 sm:p-2 text-foreground hover:text-primary transition-all duration-300 hover-tilt magnetic relative"
@@ -267,7 +254,7 @@ const ProductNavigation = () => {
 
             {/* Mobile CTA Button */}
             <div className="pt-2 sm:pt-4">
-              <Button
+              {/* <Button
                 className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-medium shadow-glow hover:shadow-xl transition-all duration-500 btn-3d relative overflow-hidden group"
                 style={{
                   transform: isMenuOpen ? "translateY(0)" : "translateY(20px)",
@@ -276,9 +263,9 @@ const ProductNavigation = () => {
               >
                 <span className="relative z-10">Shop Now</span>
 
-                {/* Animated background */}
+
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary-dark scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -768,7 +755,7 @@ const ProductPage = () => {
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-2 mr-16">
             <div className="text-xl md:text-3xl font-extrabold text-primary leading-tight animate-pulse">
-              $9
+              ₹800
             </div>
             <div className="text-[12px] md:text-xs text-black font-bold ">
               Today Only
@@ -779,7 +766,7 @@ const ProductPage = () => {
         {/* Old Price + Discount (top-right) */}
         <div className="absolute top-0 right-0 text-right">
           <span className="text-xl md:text-xl font-semibold text-muted-foreground line-through">
-            $37
+            ₹3288
           </span>
           <Badge className="bg-destructive text-destructive-foreground font-bold py-0.5 px-1 text-[9px] md:text-[14px] ml-1 animate-pulse">
             76% OFF
@@ -797,7 +784,7 @@ const ProductPage = () => {
   Download PDF (5MB)
   <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
 </Button> */}
- <RazorpayButton amount={9} productName="Complete System Access" />
+ <RazorpayButton amount={800} productName="34-Page E-book" />
 
 
       {/* Features - Closer spacing between items */}
@@ -1340,7 +1327,7 @@ const ProductPage = () => {
             </motion.div>
 
        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 md:mb-4">
-  What's Inside - <span className="font-black text-primary">$264</span> Value Pack
+  What's Inside - <span className="font-black text-primary">₹23,458</span> Value Pack
 </h2>
 
 
@@ -1358,8 +1345,8 @@ const ProductPage = () => {
               💎 Premium Value Package
             </div>
             <div className="text-base md:text-lg text-gray-600">
-              Worth <span className="line-through text-gray-400 font-bold">$264</span> 
-              <span className="ml-2 text-green-600 font-bold">Now Just $9!</span>
+              Worth <span className="line-through text-gray-400 font-bold">₹23,458</span> 
+              <span className="ml-2 text-green-600 font-bold">Now Just ₹800!</span>
             </div>
           </div>
         </div>
@@ -1429,7 +1416,7 @@ const ProductPage = () => {
               {
                 module: "Module 1",
                 title: "The Truth About Melanin-Rich Skin",
-                price: "$49",
+                price: "₹4354",
                 features: [
                   "Why many routines harm melanin",
                   "Ingredients that harm melanin",
@@ -1442,7 +1429,7 @@ const ProductPage = () => {
               {
                 module: "Module 2",
                 title: "Hormonal Balance & Skin Health",
-                price: "$55",
+                price: "₹4887",
                 features: [
                   "Gut-skin connection mastery",
                   "Stress & sleep optimization",
@@ -1455,7 +1442,7 @@ const ProductPage = () => {
               {
                 module: "Module 3",
                 title: "Emotional Healing for Confidence",
-                price: "$47",
+                price: "₹4176",
                 features: [
                   "Release skin shame & trauma",
                   "Confidence-building exercises",
@@ -1529,7 +1516,7 @@ const ProductPage = () => {
               {
                 module: "Module 4",
                 title: "Minimal Skincare That Works",
-                price: "$44",
+                price: "₹3910",
                 features: [
                   "Melanin-safe ingredient layering",
                   "3-step routine system",
@@ -1542,7 +1529,7 @@ const ProductPage = () => {
               {
                 module: "Module 5",
                 title: "From Bare Skin to Boss Moves ",
-                price: "$50",
+                price: "₹3443",
                 features: [
                   "Show up confidently without makeup",
                   "Daily glow affirmations",
@@ -2121,20 +2108,20 @@ const ProductPage = () => {
             {/* Title */}
             {/* Title */}
 <h3 className="text-lg font-bold text-foreground leading-snug whitespace-nowrap">
-  Just $9 Today — No Upsells. No Fluff.
+  Just ₹800 Today — No Upsells. No Fluff.
 </h3>
 
 
             {/* Price Section */}
             <div className="flex items-center justify-center gap-2">
               <span className="text-xl font-bold text-muted-foreground line-through">
-                $37
+                ₹3288
               </span>
               <ArrowRight className="h-4 w-4 text-primary" />
-              <span className="text-3xl font-extrabold text-primary">$9</span>
+              <span className="text-3xl font-extrabold text-primary">₹800</span>
             </div>
            <p className="text-xs font-bold text-black">
-  Today Only — Returns to $37 Soon
+  Today Only — Returns to ₹3288 Soon
 </p>
 
 
@@ -2160,7 +2147,7 @@ const ProductPage = () => {
               <ShoppingCart className="h-4 w-4 mr-1" />
               👉 Start Your Glow Journey Now
             </Button> */}
-             <RazorpayButton amount={9} productName="Complete System Access" />
+             <RazorpayButton amount={800} productName="34-Page E-book" />
 
             {/* Bottom Message */}
             <p className="text-xs text-muted-foreground italic leading-snug">

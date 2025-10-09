@@ -83,7 +83,6 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     handlePayment();
   };
 
-  // ... (rest of the handlePayment function remains the same)
   const handlePayment = async () => {
     setIsLoading(true);
     
@@ -324,30 +323,6 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
 
   return (
     <>
-      {/* <Toaster
-        position="top-center"
-        reverseOrder={false}
-        gutter={12}
-        containerStyle={{
-          top: 80,
-          zIndex: 9999,
-        }}
-        toastOptions={{
-          className: '',
-          style: {
-            maxWidth: '500px',
-            minWidth: '300px',
-            zIndex: 9999,
-          },
-          success: {
-            duration: 5000,
-          },
-          error: {
-            duration: 4000,
-          },
-        }}
-      /> */}
-
       <button
         onClick={() => setShowModal(true)}
         disabled={isLoading}
@@ -361,7 +336,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         ) : (
           <>
             <ShoppingCart className="h-3 w-3 md:h-4 md:w-4" />
-            Download PDF ${amount}
+            Download PDF ₹{amount}
             <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
           </>
         )}
@@ -391,6 +366,28 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
 
             {/* Modal Body */}
             <div className="p-6 space-y-6">
+              {/* Order Summary */}
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-semibold text-gray-700">Order Summary</span>
+                  <span className="text-lg font-bold text-primary">₹{amount}</span>
+                </div>
+                <div className="text-xs text-gray-600">
+                  <div className="flex justify-between py-1">
+                    <span>{productName}</span>
+                    <span>₹{amount}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Message */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800 flex items-start gap-2">
+                  <span className="text-base">ℹ️</span>
+                  <span>After entering your details, you'll be redirected to Razorpay's secure payment gateway to complete your purchase.</span>
+                </p>
+              </div>
+
               {/* Email Input */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">
@@ -459,9 +456,10 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
               {/* Submit Button */}
               <button
                 onClick={handleSubmit}
-                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2"
               >
-                Proceed to Payment
+                <ShoppingCart className="h-5 w-5" />
+                Pay ₹{amount}
               </button>
             </div>
           </div>
