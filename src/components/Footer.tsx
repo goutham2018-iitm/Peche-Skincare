@@ -1,10 +1,11 @@
-// components/Footer.jsx - Streamlined and improved
 import { Sparkles, Instagram, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from "react-hot-toast";
+import { Link } from 'react-router-dom';
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-// Custom TikTok Icon as a component
+// Custom TikTok Icon
 const TikTokIcon = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -159,6 +160,13 @@ const Footer = () => {
     },
   ];
 
+  const policyLinks = [
+    { name: 'Privacy Policy', path: '/privacy-policy' },
+    { name: 'Terms of Service', path: '/terms-of-service' },
+    { name: 'Cancellation & Refunds', path: '/cancellation-refunds' },
+    { name: 'Shipping Policy', path: '/shipping-policy' },
+  ];
+
   return (
     <>
       {/* Toast Container */}
@@ -235,20 +243,20 @@ const Footer = () => {
                     Get exclusive skincare tips and early access to new products delivered to your inbox.
                   </p>
                   
-                  <form onSubmit={handleSubscribe} className="space-y-4">
+                  <form onSubmit={handleSubscribe} className="flex gap-2">
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email address"
-                      className="w-full px-4 py-3 rounded-lg border border-border/50 bg-background/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-secondary-foreground/50"
+                      placeholder="Enter your email"
+                      className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                     />
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full px-6 py-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:opacity-70"
+                      className="px-6 py-2 bg-primary/90 hover:bg-primary text-white rounded-lg transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? "Subscribing..." : "Subscribe Now"}
+                      {loading ? 'Joining...' : 'Join'}
                     </button>
                   </form>
                 </div>
@@ -265,14 +273,24 @@ const Footer = () => {
                 <p>Made with care for radiant skin</p>
               </div>
               
-              <div className="flex items-center justify-center sm:justify-end gap-4 text-sm text-secondary-foreground/50">
-                <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-                <div className="w-1 h-1 bg-secondary-foreground/30 rounded-full"></div>
-                <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-sm text-secondary-foreground/50">
+                {policyLinks.map((policy, index) => (
+                  <div key={policy.name} className="flex items-center gap-3">
+                    <Link
+                      to={policy.path}
+                      className="hover:text-primary transition-colors cursor-pointer"
+                    >
+                      {policy.name}
+                    </Link>
+                    {index < policyLinks.length - 1 && (
+                      <div className="w-1 h-1 bg-secondary-foreground/30 rounded-full"></div>
+                    )}
+                  </div>
+                ))}
                 {lastUpdated && (
                   <>
                     <div className="w-1 h-1 bg-secondary-foreground/30 rounded-full hidden sm:block"></div>
-                    <div className="text-xs text-secondary-foreground/50 ml-2 sm:ml-0">
+                    <div className="text-xs text-secondary-foreground/50">
                       <span className="hidden sm:inline">Last updated: </span>
                       <span className="sm:hidden">Updated: </span>
                       {lastUpdated}

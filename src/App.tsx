@@ -12,6 +12,10 @@ import BackToTop from "./components/BacktoToTop";
 import AdminDashboard from "./components/AdminDashboard";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react"
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import TermsOfService from "./components/TermsOfService";
+import CancellationRefunds from "./components/CancellationRefunds";
+import ShippingPolicy from "./components/ShippingPolicy";
 const queryClient = new QueryClient();
 
 const Layout = () => {
@@ -39,6 +43,10 @@ const App = () => (
             {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
             <Route path="*" element={<NotFound />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cancellation-refunds" element={<CancellationRefunds />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
           </Route>
         </Routes>
       </BrowserRouter>
