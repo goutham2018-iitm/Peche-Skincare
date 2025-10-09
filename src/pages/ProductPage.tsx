@@ -797,7 +797,7 @@ const ProductPage = () => {
   Download PDF (5MB)
   <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
 </Button> */}
- <RazorpayButton amount={999} productName="Complete System Access" />
+ <RazorpayButton amount={9} productName="Complete System Access" />
 
 
       {/* Features - Closer spacing between items */}
@@ -2160,7 +2160,7 @@ const ProductPage = () => {
               <ShoppingCart className="h-4 w-4 mr-1" />
               👉 Start Your Glow Journey Now
             </Button> */}
-             <RazorpayButton amount={999} productName="Complete System Access" />
+             <RazorpayButton amount={9} productName="Complete System Access" />
 
             {/* Bottom Message */}
             <p className="text-xs text-muted-foreground italic leading-snug">
