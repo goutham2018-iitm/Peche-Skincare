@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { ShoppingCart, ArrowDown, Loader2, Mail, Phone, X } from "lucide-react";
+import { ShoppingCart, ArrowDown, Loader2, Mail, Phone, User, X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 interface RazorpayButtonProps {
@@ -12,9 +12,10 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [errors, setErrors] = useState({ email: "", phone: "" });
+  const [errors, setErrors] = useState({ name: "", email: "", phone: "" });
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,25 +27,42 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     return regex.test(phone);
   };
 
+  const validateName = (name: string) => {
+    return name.trim().length >= 2;
+  };
+
   const handleSubmit = () => {
     // Clear previous errors
-    setErrors({ email: "", phone: "" });
+    setErrors({ name: "", email: "", phone: "" });
     
     let hasError = false;
     let errorMessage = "";
 
-    // Validate email
-    if (!email.trim()) {
-      setErrors(prev => ({ ...prev, email: "Email is required" }));
-      errorMessage = "Please enter your email address";
+    // Validate name
+    if (!name.trim()) {
+      setErrors(prev => ({ ...prev, name: "Name is required" }));
+      errorMessage = "Please enter your name";
       hasError = true;
-    } else if (!validateEmail(email)) {
-      setErrors(prev => ({ ...prev, email: "Invalid email format" }));
-      errorMessage = "Please enter a valid email address";
+    } else if (!validateName(name)) {
+      setErrors(prev => ({ ...prev, name: "Name must be at least 2 characters" }));
+      errorMessage = "Please enter a valid name (at least 2 characters)";
       hasError = true;
     }
+
+    // Validate email
+    if (!hasError) {
+      if (!email.trim()) {
+        setErrors(prev => ({ ...prev, email: "Email is required" }));
+        errorMessage = "Please enter your email address";
+        hasError = true;
+      } else if (!validateEmail(email)) {
+        setErrors(prev => ({ ...prev, email: "Invalid email format" }));
+        errorMessage = "Please enter a valid email address";
+        hasError = true;
+      }
+    }
     
-    // Only check phone if email is valid
+    // Validate phone
     if (!hasError) {
       if (!phone.trim()) {
         setErrors(prev => ({ ...prev, phone: "Phone number is required" }));
@@ -121,6 +139,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                 razorpay_order_id,
                 razorpay_signature,
                 productName,
+                name,
                 email,
                 phone,
               }),
@@ -232,6 +251,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                   error_code: "cancelled",
                   error_description: "Payment cancelled by user",
                   productName,
+                  name,
                   email,
                   phone,
                 }),
@@ -243,6 +263,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         },
         theme: { color: "#D48265" },
         prefill: {
+          name: name,
           email: email,
           contact: phone,
         },
@@ -285,6 +306,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
               error_code: response.error.code,
               error_description: response.error.description,
               productName,
+              name,
               email,
               phone,
             }),
@@ -342,7 +364,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         )}
       </button>
 
-      {/* User Details Modal - Fixed Design */}
+      {/* User Details Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100">
@@ -360,12 +382,12 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                 </button>
               </div>
               <p className="text-primary-50 text-sm mt-2">
-                We'll use this information to send your purchase confirmation and download link.
+                We'll send your e-book to the email address provided below.
               </p>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-5">
               {/* Order Summary */}
               <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
                 <div className="flex justify-between items-center mb-2">
@@ -384,8 +406,37 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-xs text-blue-800 flex items-start gap-2">
                   <span className="text-base">ℹ️</span>
-                  <span>After entering your details, you'll be redirected to Razorpay's secure payment gateway to complete your purchase.</span>
+                  <span>After entering your details, you'll be redirected to Razorpay's secure payment gateway.</span>
                 </p>
+              </div>
+
+              {/* Name Input */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
+                  Full Name *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setErrors({ ...errors, name: "" });
+                    }}
+                    placeholder="John Doe"
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                      errors.name 
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-200" 
+                        : "border-gray-200 focus:border-primary focus:ring-primary/20"
+                    }`}
+                  />
+                </div>
+                {errors.name && (
+                  <p className="text-red-500 text-xs font-medium flex items-center gap-1 mt-1">
+                    <span>⚠</span> {errors.name}
+                  </p>
+                )}
               </div>
 
               {/* Email Input */}

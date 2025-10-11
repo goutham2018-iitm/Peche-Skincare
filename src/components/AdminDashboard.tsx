@@ -13,12 +13,14 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  User,
 } from "lucide-react";
 
 interface Payment {
   id: string;
   payment_id: string;
   order_id: string;
+  name: string;
   email: string;
   phone: string;
   product_name: string;
@@ -146,7 +148,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-   const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("adminToken");
     setToken(null);
     setIsLoggedIn(false);
@@ -447,12 +449,18 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2 text-sm text-gray-900 font-medium">
+                        <div className="flex flex-col space-y-1">
+                          {payment.name && (
+                            <div className="flex items-center gap-2 text-sm text-gray-900 font-semibold">
+                              <User className="h-3 w-3 text-orange-400" />
+                              {payment.name}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2 text-xs text-gray-700">
                             <Mail className="h-3 w-3 text-orange-400" />
                             {payment.email || "N/A"}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                          <div className="flex items-center gap-2 text-xs text-gray-600">
                             <Phone className="h-3 w-3 text-orange-400" />
                             {payment.phone || "N/A"}
                           </div>
