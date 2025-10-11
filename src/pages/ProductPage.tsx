@@ -1336,78 +1336,37 @@ const ProductPage = () => {
            {/* // Professional animated text flipper with elegant boxes - Replace your static <p> tag with this: */}
 
 <div className="text-center max-w-4xl mx-auto">
-  <div className="relative h-24 overflow-hidden">
-    <div className="absolute inset-0 flex flex-col animate-text-flip">
-       <div className="h-24 flex items-center justify-center shrink-0 px-4">
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-8 py-4 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="text-center">
-            <div className="text-lg md:text-xl font-bold text-gray-700 mb-1">
-              💎 Premium Value Package
-            </div>
-            <div className="text-base md:text-lg text-gray-600">
-              Worth <span className="line-through text-gray-400 font-bold">₹23,458</span> 
-              <span className="ml-2 text-green-600 font-bold">Now Just ₹800!</span>
-            </div>
-          </div>
+  <div className="h-24 flex items-center justify-center px-4">
+    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-8 py-4 shadow-md hover:shadow-lg transition-all duration-300">
+      <div className="text-center">
+        <div className="text-lg md:text-xl font-bold text-gray-700 mb-1">
+          💎 Premium Value Package
         </div>
-      </div>
-      {/* Text 1: 5 Comprehensive Modules */}
-      
-      <div className="h-24 flex items-center justify-center shrink-0 px-4">
-        <div className="bg-gradient-to-r from-orange-50 to-rose-50 border border-orange-200 rounded-xl px-8 py-4 shadow-sm hover:shadow-md transition-all duration-300">
-          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-rose-600 text-transparent bg-clip-text">
-            ✨ 5 Comprehensive Modules
+        <div className="text-base md:text-lg text-gray-600">
+          Worth <span className="line-through text-gray-400 font-bold">₹23,458</span> 
+          <span className="ml-2 font-bold discount-price">
+            Now Just ₹800!
           </span>
         </div>
       </div>
-      
-      {/* Text 2: Exclusive Bonus Materials */}
-      <div className="h-24 flex items-center justify-center shrink-0 px-4">
-        <div className="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-200 rounded-xl px-8 py-4 shadow-sm hover:shadow-md transition-all duration-300">
-          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 text-transparent bg-clip-text">
-            🎁 + Exclusive Bonus Materials
-          </span>
-        </div>
-      </div>
-      
-      {/* Text 3: Premium Value Package */}
-      {/* <div className="h-24 flex items-center justify-center shrink-0 px-4">
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-8 py-4 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="text-center">
-            <div className="text-lg md:text-xl font-bold text-gray-700 mb-1">
-              💎 Premium Value Package
-            </div>
-            <div className="text-base md:text-lg text-gray-600">
-              Worth <span className="line-through text-gray-400 font-medium">$264</span> 
-              <span className="ml-2 text-green-600 font-bold">Now Just $9!</span>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   </div>
-
-  <style jsx>{`
-    @keyframes textFlip {
-      0%, 30% {
-        transform: translateY(0);
-      }
-      33.33%, 63.33% {
-        transform: translateY(-6rem);
-      }
-      66.66%, 96.66% {
-        transform: translateY(-12rem);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-    
-    .animate-text-flip {
-      animation: textFlip 7s ease-in-out infinite;
-    }
-  `}</style>
 </div>
+
+<style jsx>{`
+  .discount-price {
+    display: inline-block;
+    font-weight: bold;
+    animation: discountPulse 1.2s ease-in-out infinite;
+    color: #16a34a; /* initial green */
+  }
+
+  @keyframes discountPulse {
+    0%, 100% { transform: scale(1); color: #16a34a; }
+    50% { transform: scale(1.1); color: #22c55e; }
+  }
+`}</style>
+
           </div>
 
           {/* Top 3 Modules */}
@@ -2102,60 +2061,57 @@ const ProductPage = () => {
       {/* Philosophy Section */}
       <Philosophy />
       {/* Final CTA - Compact */}
-      <section className="py-6 bg-gradient-to-br from-primary/10 to-accent/10">
-        <div className="container mx-auto px-3 max-w-sm">
-          <div className="bg-card rounded-lg p-4 shadow-md border border-border text-center space-y-3">
-            {/* Title */}
-            {/* Title */}
-<h3 className="text-lg font-bold text-foreground leading-snug whitespace-nowrap">
-  Just ₹800 Today — No Upsells. No Fluff.
-</h3>
+     <section className="py-6 bg-gradient-to-br from-primary/10 to-accent/10">
+  <div className="container mx-auto px-3 max-w-md">
+    <div className="bg-card rounded-lg p-4 shadow-md border border-border text-center space-y-3">
+      
+      {/* Title */}
+      <h3 className="text-lg font-bold text-foreground leading-snug break-words text-center">
+        Just ₹800 Today — No Upsells. No Fluff.
+      </h3>
 
+      {/* Price Section */}
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-xl font-bold text-muted-foreground line-through">
+          ₹3288
+        </span>
+        <ArrowRight className="h-4 w-4 text-primary" />
+        <span className="text-3xl font-extrabold text-primary">₹800</span>
+      </div>
 
-            {/* Price Section */}
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-xl font-bold text-muted-foreground line-through">
-                ₹3288
-              </span>
-              <ArrowRight className="h-4 w-4 text-primary" />
-              <span className="text-3xl font-extrabold text-primary">₹800</span>
-            </div>
-           <p className="text-xs font-bold text-black">
-  Today Only — Returns to ₹3288 Soon
-</p>
+      <p className="text-xs font-bold text-black">
+        Today Only — Returns to ₹3288 Soon
+      </p>
 
-
-
-            {/* Risk-Free Box */}
-            <div className="bg-primary/5 rounded-md p-3 border border-primary/20">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Shield className="h-4 w-4 text-primary" />
-                <span className="font-medium text-primary text-sm">
-                  Risk-Free
-                </span>
-              </div>
-              <p className="text-xs text-foreground/80 leading-snug">
-                If it doesn't help, DM me. Feel confident, not confused.
-              </p>
-            </div>
-
-            {/* Buy Button */}
-            {/* <Button
-              onClick={handleBuyNow}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 text-sm rounded-md shadow hover:shadow-lg transition-all duration-200"
-            >
-              <ShoppingCart className="h-4 w-4 mr-1" />
-              👉 Start Your Glow Journey Now
-            </Button> */}
-             <RazorpayButton amount={800} productName="34-Page E-book" />
-
-            {/* Bottom Message */}
-            <p className="text-xs text-muted-foreground italic leading-snug">
-              Your skin (and your wallet) will thank you.
-            </p>
-          </div>
+      {/* Risk-Free Box */}
+      <div className="bg-primary/5 rounded-md p-3 border border-primary/20">
+        <div className="flex items-center justify-center gap-1 mb-1">
+          <Shield className="h-4 w-4 text-primary" />
+          <span className="font-medium text-primary text-sm">Risk-Free</span>
         </div>
-      </section>
+        <p className="text-xs text-foreground/80 leading-snug">
+          If it doesn't help, DM me. Feel confident, not confused.
+        </p>
+      </div>
+
+      {/* Buy Button */}
+      {/* <Button
+        onClick={handleBuyNow}
+        className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 text-sm rounded-md shadow hover:shadow-lg transition-all duration-200"
+      >
+        <ShoppingCart className="h-4 w-4 mr-1" />
+        👉 Start Your Glow Journey Now
+      </Button> */}
+      <RazorpayButton amount={800} productName="34-Page E-book" />
+
+      {/* Bottom Message */}
+      <p className="text-xs text-muted-foreground italic leading-snug">
+        Your skin (and your wallet) will thank you.
+      </p>
+    </div>
+  </div>
+</section>
+
 
       {/* FAQ - Compact with Smooth Transition */}
       <section
