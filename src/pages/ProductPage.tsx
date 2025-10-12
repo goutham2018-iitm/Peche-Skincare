@@ -755,7 +755,7 @@ const ProductPage = () => {
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-2 mr-16">
             <div className="text-xl md:text-3xl font-extrabold text-primary leading-tight animate-pulse">
-              ₹800
+              $9
             </div>
             <div className="text-[12px] md:text-xs text-black font-bold ">
               Today Only
@@ -766,7 +766,7 @@ const ProductPage = () => {
         {/* Old Price + Discount (top-right) */}
         <div className="absolute top-0 right-0 text-right">
           <span className="text-xl md:text-xl font-semibold text-muted-foreground line-through">
-            ₹3288
+            $37
           </span>
           <Badge className="bg-destructive text-destructive-foreground font-bold py-0.5 px-1 text-[9px] md:text-[14px] ml-1 animate-pulse">
             76% OFF
@@ -784,7 +784,7 @@ const ProductPage = () => {
   Download PDF (5MB)
   <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
 </Button> */}
- <RazorpayButton amount={800} productName="34-Page E-book" />
+ <RazorpayButton amount={9} productName="34-Page E-book" />
 
 
       {/* Features - Closer spacing between items */}
@@ -1327,7 +1327,7 @@ const ProductPage = () => {
             </motion.div>
 
        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 md:mb-4">
-  What's Inside - <span className="font-black text-primary">₹23,458</span> Value Pack
+  What's Inside - <span className="font-black text-primary">$264</span> Value Pack
 </h2>
 
 
@@ -1343,9 +1343,9 @@ const ProductPage = () => {
           💎 Premium Value Package
         </div>
         <div className="text-base md:text-lg text-gray-600">
-          Worth <span className="line-through text-gray-400 font-bold">₹23,458</span> 
+          Worth <span className="line-through text-gray-400 font-bold">$264</span> 
           <span className="ml-2 font-bold discount-price">
-            Now Just ₹800!
+            Now Just $9!
           </span>
         </div>
       </div>
@@ -1375,7 +1375,7 @@ const ProductPage = () => {
               {
                 module: "Module 1",
                 title: "The Truth About Melanin-Rich Skin",
-                price: "₹4354",
+                price: "$48",
                 features: [
                   "Why many routines harm melanin",
                   "Ingredients that harm melanin",
@@ -1388,7 +1388,7 @@ const ProductPage = () => {
               {
                 module: "Module 2",
                 title: "Hormonal Balance & Skin Health",
-                price: "₹4887",
+                price: "$54",
                 features: [
                   "Gut-skin connection mastery",
                   "Stress & sleep optimization",
@@ -1401,7 +1401,7 @@ const ProductPage = () => {
               {
                 module: "Module 3",
                 title: "Emotional Healing for Confidence",
-                price: "₹4176",
+                price: "$46",
                 features: [
                   "Release skin shame & trauma",
                   "Confidence-building exercises",
@@ -1475,7 +1475,7 @@ const ProductPage = () => {
               {
                 module: "Module 4",
                 title: "Minimal Skincare That Works",
-                price: "₹3910",
+                price: "$49",
                 features: [
                   "Melanin-safe ingredient layering",
                   "3-step routine system",
@@ -1488,7 +1488,7 @@ const ProductPage = () => {
               {
                 module: "Module 5",
                 title: "From Bare Skin to Boss Moves ",
-                price: "₹3443",
+                price: " $37",
                 features: [
                   "Show up confidently without makeup",
                   "Daily glow affirmations",
@@ -2067,20 +2067,20 @@ const ProductPage = () => {
       
       {/* Title */}
       <h3 className="text-lg font-bold text-foreground leading-snug break-words text-center">
-        Just ₹800 Today — No Upsells. No Fluff.
+        Just $9 Today — No Upsells. No Fluff.
       </h3>
 
       {/* Price Section */}
       <div className="flex items-center justify-center gap-2">
         <span className="text-xl font-bold text-muted-foreground line-through">
-          ₹3288
+          $37
         </span>
         <ArrowRight className="h-4 w-4 text-primary" />
-        <span className="text-3xl font-extrabold text-primary">₹800</span>
+        <span className="text-3xl font-extrabold text-primary">$9</span>
       </div>
 
       <p className="text-xs font-bold text-black">
-        Today Only — Returns to ₹3288 Soon
+        Today Only — Returns to $37 Soon
       </p>
 
       {/* Risk-Free Box */}
@@ -2102,7 +2102,7 @@ const ProductPage = () => {
         <ShoppingCart className="h-4 w-4 mr-1" />
         👉 Start Your Glow Journey Now
       </Button> */}
-      <RazorpayButton amount={800} productName="34-Page E-book" />
+      <RazorpayButton amount={9} productName="34-Page E-book" />
 
       {/* Bottom Message */}
       <p className="text-xs text-muted-foreground italic leading-snug">

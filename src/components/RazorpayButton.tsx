@@ -1,13 +1,21 @@
-import React, { FC, useState } from "react";
-import { ShoppingCart, ArrowDown, Loader2, Mail, Phone, User, X } from "lucide-react";
+import React, { FC, useState, useEffect } from "react";
+import { ShoppingCart, ArrowDown, Loader2, Mail, Phone, User, X, RefreshCw } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 interface RazorpayButtonProps {
-  amount: number;
+  amount: number; // USD amount
   productName: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
+// Interface for exchange rate data
+interface ExchangeRate {
+  USDINR: number;
+  lastUpdated: string;
+  marketStatus: 'open' | 'closed';
+  nextUpdate?: string;
+}
 
 const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +24,83 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState({ name: "", email: "", phone: "" });
+  const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
+  const [loadingRate, setLoadingRate] = useState(true);
+  const [rateError, setRateError] = useState(false);
+
+  // Fetch live USD to INR exchange rate
+  const fetchExchangeRate = async () => {
+    try {
+      setLoadingRate(true);
+      setRateError(false);
+      
+      // Using a free forex API
+      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch exchange rate');
+      }
+      
+      const data = await response.json();
+      const usdToInr = data.rates.INR;
+      
+      // Determine market status (simplified - Forex markets are open 24/5)
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+      const hour = now.getHours();
+      
+      const marketStatus: 'open' | 'closed' = 
+        (day >= 1 && day <= 5) || (day === 0 && hour >= 17) || (day === 6 && hour < 17) 
+          ? 'open' 
+          : 'closed';
+      
+      setExchangeRate({
+        USDINR: usdToInr,
+        lastUpdated: now.toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour12: true,
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        marketStatus,
+        nextUpdate: new Date(now.getTime() + 5 * 60000).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour12: true,
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      });
+      
+    } catch (error) {
+      console.error('Error fetching exchange rate:', error);
+      setRateError(true);
+      
+      // Fallback to a static rate if API fails
+      setExchangeRate({
+        USDINR: 83.50, // Fallback rate
+        lastUpdated: new Date().toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour12: true
+        }),
+        marketStatus: 'closed',
+        nextUpdate: 'N/A'
+      });
+    } finally {
+      setLoadingRate(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchExchangeRate();
+    
+    // Refresh rate every 5 minutes
+    const interval = setInterval(fetchExchangeRate, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,14 +187,40 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   };
 
   const handlePayment = async () => {
+    if (!exchangeRate) {
+      toast.error("Unable to fetch current exchange rate. Please try again.", {
+        style: {
+          background: '#FFF5F5',
+          color: '#C53030',
+          border: '1px solid #FED7D7',
+          borderRadius: '12px',
+          padding: '16px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+        iconTheme: {
+          primary: '#C53030',
+          secondary: '#FFF5F5',
+        },
+        duration: 4000,
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
+      // Convert USD to INR for Razorpay (amount in paise)
+      const inrAmount = Math.round(amount * exchangeRate.USDINR); // Convert to paise
+      
       // 1️⃣ Create order on backend
       const orderRes = await fetch(`${API_URL}/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ 
+          amount: inrAmount, // Send INR amount in paise
+          currency: "INR" // Force INR currency
+        }),
       });
 
       if (!orderRes.ok) {
@@ -122,7 +233,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
       const options: any = {
         key: import.meta.env.VITE_RAZORPAY_KEY,
         amount: order.amount,
-        currency: order.currency,
+        currency: "INR", // Force INR currency
         name: "Pêche",
         description: productName,
         order_id: order.id,
@@ -142,6 +253,8 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                 name,
                 email,
                 phone,
+                originalUsdAmount: amount,
+                exchangeRate: exchangeRate?.USDINR
               }),
             });
 
@@ -343,11 +456,15 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     }
   };
 
+  // Calculate INR amount
+  const inrAmount = exchangeRate ? (amount * exchangeRate.USDINR) : null;
+  const displayInrAmount = inrAmount ? Math.ceil(inrAmount) : null;
+
   return (
     <>
       <button
         onClick={() => setShowModal(true)}
-        disabled={isLoading}
+        disabled={isLoading || loadingRate}
         className="w-full mt-2 md:mt-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-semibold py-2 md:py-2.5 text-xs md:text-sm rounded-lg shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         {isLoading ? (
@@ -358,7 +475,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         ) : (
           <>
             <ShoppingCart className="h-3 w-3 md:h-4 md:w-4" />
-            Download PDF ₹{amount}
+            Download PDF ${amount}
             <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
           </>
         )}
@@ -367,7 +484,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
       {/* User Details Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-100 max-h-[90vh] overflow-y-auto my-4">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-primary to-primary/90 p-6">
               <div className="flex justify-between items-center">
@@ -388,16 +505,87 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
 
             {/* Modal Body */}
             <div className="p-6 space-y-5">
+              {/* Currency Conversion Display */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-gray-800 text-sm">Currency Conversion</h3>
+                  <button
+                    onClick={fetchExchangeRate}
+                    disabled={loadingRate}
+                    className="p-1.5 hover:bg-white rounded-lg transition-colors"
+                    title="Refresh rate"
+                  >
+                    <RefreshCw 
+                      className={`h-4 w-4 text-gray-600 ${loadingRate ? 'animate-spin' : ''}`} 
+                    />
+                  </button>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">USD Amount:</span>
+                    <span className="font-semibold text-lg">${amount} USD</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">INR Amount:</span>
+                    <span className="font-bold text-green-700 text-lg">
+                      {loadingRate ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Loading...
+                        </div>
+                      ) : displayInrAmount ? (
+                        `₹${displayInrAmount} INR`
+                      ) : (
+                        "Rate unavailable"
+                      )}
+                    </span>
+                  </div>
+                  
+                  {exchangeRate && (
+                    <div className="text-xs text-gray-500 space-y-1 mt-3 pt-3 border-t border-gray-200">
+                      <div className="flex justify-between">
+                        <span>Exchange Rate:</span>
+                        <span>1 USD = ₹{exchangeRate.USDINR.toFixed(2)} INR</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Market Status:</span>
+                        <span className={`font-medium ${
+                          exchangeRate.marketStatus === 'open' 
+                            ? 'text-green-600' 
+                            : 'text-orange-600'
+                        }`}>
+                          {exchangeRate.marketStatus === 'open' ? '🟢 Live' : '🟡 Last Closing'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Last Updated:</span>
+                        <span>{exchangeRate.lastUpdated} IST</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {rateError && (
+                    <div className="text-xs text-orange-600 bg-orange-50 p-2 rounded-lg mt-2">
+                      ⚠ Using fallback exchange rate. Actual amount may vary slightly.
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Order Summary */}
               <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-semibold text-gray-700">Order Summary</span>
-                  <span className="text-lg font-bold text-primary">₹{amount}</span>
+                  <span className="text-lg font-bold text-primary">
+                    {displayInrAmount ? `₹${displayInrAmount}` : 'Calculating...'}
+                  </span>
                 </div>
                 <div className="text-xs text-gray-600">
                   <div className="flex justify-between py-1">
                     <span>{productName}</span>
-                    <span>₹{amount}</span>
+                    <span>${amount} USD</span>
                   </div>
                 </div>
               </div>
@@ -406,7 +594,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-xs text-blue-800 flex items-start gap-2">
                   <span className="text-base">ℹ️</span>
-                  <span>After entering your details, you'll be redirected to Razorpay's secure payment gateway.</span>
+                  <span>After entering your details, you'll be redirected to Razorpay's secure payment gateway. Payment will be processed in INR.</span>
                 </p>
               </div>
 
@@ -424,7 +612,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                       setName(e.target.value);
                       setErrors({ ...errors, name: "" });
                     }}
-                    placeholder="John Doe"
+                    placeholder="Name"
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
                       errors.name 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-200" 
@@ -453,7 +641,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                       setEmail(e.target.value);
                       setErrors({ ...errors, email: "" });
                     }}
-                    placeholder="your@email.com"
+                    placeholder="Email"
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
                       errors.email 
                         ? "border-red-500 focus:border-red-500 focus:ring-red-200" 
@@ -485,7 +673,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
                         setErrors({ ...errors, phone: "" });
                       }
                     }}
-                    placeholder="9876543210"
+                    placeholder="10-digit Mobile"
                     maxLength={10}
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
                       errors.phone 
@@ -507,11 +695,23 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
               {/* Submit Button */}
               <button
                 onClick={handleSubmit}
-                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2"
+                disabled={!exchangeRate || loadingRate}
+                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 <ShoppingCart className="h-5 w-5" />
-                Pay ₹{amount}
+                {loadingRate ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Loading Exchange Rate...
+                  </>
+                ) : (
+                  `Pay ${displayInrAmount ? `₹${displayInrAmount}` : '...'} INR`
+                )}
               </button>
+              
+              <p className="text-xs text-gray-500 text-center">
+                Payment will be processed in Indian Rupees (INR) through Razorpay
+              </p>
             </div>
           </div>
         </div>
