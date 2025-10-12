@@ -218,7 +218,7 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          amount: inrAmount, // Send INR amount in paise
+          amount: inrAmount, 
           currency: "INR" // Force INR currency
         }),
       });
