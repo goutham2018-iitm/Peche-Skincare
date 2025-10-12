@@ -845,9 +845,17 @@ const ProductPage = () => {
 
               <div className="flex-1 flex flex-col">
                 <div className="relative group mb-0">
+                  <link 
+                    rel="preload" 
+                    as="image" 
+                    href="https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_auto:good,fl_progressive/v1760251803/DTP_3061_wf2a7v_1_dlwpjs.jpg"
+                  />
                   <img
-                    src="https://res.cloudinary.com/dwit7nxav/image/upload/v1758218700/DTP_3061_wf2a7v.jpg"
+                    src="https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_auto:good,fl_progressive/v1760251803/DTP_3061_wf2a7v_1_dlwpjs.jpg"
                     alt="Skincare transformation results"
+                    loading="eager"
+                    fetchPriority="high"
+                    crossOrigin="anonymous"
                     className="w-full h-[420px] md:h-[480px] lg:h-[500px] object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                   <div className="absolute top-4 left-4">
