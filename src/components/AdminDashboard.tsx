@@ -15,6 +15,7 @@ import {
   Loader2,
   User,
 } from "lucide-react";
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 
 interface Payment {
   id: string;
@@ -52,7 +53,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 const [activeTab, setActiveTab] = useState<"dashboard" | "analytics">("dashboard");
-const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
+// const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
 
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -150,19 +151,19 @@ const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
       console.error("Error fetching stats:", err);
     }
   };
-const fetchVercelAnalytics = async () => {
-  try {
-    const res = await fetch(`${API_URL}/admin/vercel-analytics`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (data.success) {
-      setVercelAnalytics(data.analytics);
-    }
-  } catch (err) {
-    console.error("Error fetching Vercel analytics:", err);
-  }
-};
+// const fetchVercelAnalytics = async () => {
+//   try {
+//     const res = await fetch(`${API_URL}/admin/vercel-analytics`, {
+//       headers: { Authorization: `Bearer ${token}` },
+//     });
+//     const data = await res.json();
+//     if (data.success) {
+//       setVercelAnalytics(data.analytics);
+//     }
+//   } catch (err) {
+//     console.error("Error fetching Vercel analytics:", err);
+//   }
+// };
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
@@ -338,19 +339,6 @@ const fetchVercelAnalytics = async () => {
     Dashboard
   </button>
 
-  <button
-    onClick={() => {
-      setActiveTab("analytics");
-      fetchVercelAnalytics();
-    }}
-    className={`px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all ${
-      activeTab === "analytics"
-        ? "bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-lg"
-        : "bg-white text-gray-700 border-2 border-orange-200 hover:bg-orange-50"
-    }`}
-  >
-    Analytics
-  </button>
 
   <button
     onClick={handleLogout}
@@ -565,12 +553,27 @@ const fetchVercelAnalytics = async () => {
         </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-100 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics</h2>
-            {vercelAnalytics ? (
-              <pre>{JSON.stringify(vercelAnalytics, null, 2)}</pre>
+            {/* <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics</h2> */}
+            {/* {activeTab === "analytics" && (
+  <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-100 p-6">
+    <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics</h2>
+    <p className="text-gray-600 mb-4">
+      Real-time analytics powered by Vercel
+    </p>
+
+    <VercelAnalytics />
+
+    <p className="text-gray-500 text-sm mt-2">
+      Metrics like pageviews, FCP, LCP, CLS, and FID are tracked automatically.
+    </p>
+  </div>
+)} */}
+
+            {/* {vercelAnalytics ? (
+              <pre>{JSON.stringify(vercel , null, 2)}</pre>
             ) : (
               <p>Loading analytics data...</p>
-            )}
+            )} */}
           </div>
         )}
       </main>
