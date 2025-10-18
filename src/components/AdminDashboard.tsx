@@ -41,6 +41,7 @@ interface Stats {
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+
 const AdminDashboard: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -50,6 +51,8 @@ const AdminDashboard: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+const [activeTab, setActiveTab] = useState<"dashboard" | "analytics">("dashboard");
+const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
 
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -147,6 +150,19 @@ const AdminDashboard: React.FC = () => {
       console.error("Error fetching stats:", err);
     }
   };
+const fetchVercelAnalytics = async () => {
+  try {
+    const res = await fetch(`${API_URL}/admin/vercel-analytics`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (data.success) {
+      setVercelAnalytics(data.analytics);
+    }
+  } catch (err) {
+    console.error("Error fetching Vercel analytics:", err);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
@@ -308,13 +324,43 @@ const AdminDashboard: React.FC = () => {
                 Welcome back, {email}
               </p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-400 to-rose-400 hover:from-red-500 hover:to-rose-500 text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-semibold"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+  <button
+    onClick={() => {
+      setActiveTab("dashboard");
+    }}
+    className={`px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all ${
+      activeTab === "dashboard"
+        ? "bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-lg"
+        : "bg-white text-gray-700 border-2 border-orange-200 hover:bg-orange-50"
+    }`}
+  >
+    Dashboard
+  </button>
+
+  <button
+    onClick={() => {
+      setActiveTab("analytics");
+      fetchVercelAnalytics();
+    }}
+    className={`px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all ${
+      activeTab === "analytics"
+        ? "bg-gradient-to-r from-orange-400 to-rose-400 text-white shadow-lg"
+        : "bg-white text-gray-700 border-2 border-orange-200 hover:bg-orange-50"
+    }`}
+  >
+    Analytics
+  </button>
+
+  <button
+    onClick={handleLogout}
+    className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-400 to-rose-400 hover:from-red-500 hover:to-rose-500 text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-semibold"
+  >
+    <LogOut className="h-4 w-4" />
+    Logout
+  </button>
+</div>
+
           </div>
         </div>
       </header>
@@ -390,7 +436,8 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {/* Payments Table */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-100">
+        {activeTab === "dashboard" ? (
+          <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-100">
           <div className="px-6 py-5 border-b-2 border-orange-100 bg-gradient-to-r from-orange-50 to-rose-50">
             <h2 className="text-xl font-bold text-gray-900">
               Recent Payments
@@ -516,6 +563,16 @@ const AdminDashboard: React.FC = () => {
             </table>
           </div>
         </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-xl border-2 border-orange-100 p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Analytics</h2>
+            {vercelAnalytics ? (
+              <pre>{JSON.stringify(vercelAnalytics, null, 2)}</pre>
+            ) : (
+              <p>Loading analytics data...</p>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
