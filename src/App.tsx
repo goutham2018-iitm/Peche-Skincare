@@ -16,6 +16,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsOfService from "./components/TermsOfService";
 import CancellationRefunds from "./components/CancellationRefunds";
 import ShippingPolicy from "./components/ShippingPolicy";
+import { CartPage } from "./components/RazorpayButton";
 const queryClient = new QueryClient();
 
 const Layout = () => {
@@ -31,6 +32,7 @@ const Layout = () => {
 };
 
 const App = () => (
+  
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -40,6 +42,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<ProductPage />} />
             <Route path="/product" element={<ProductPage />} />
+     <Route path="/cart" element={<CartPage />} />
             {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
             <Route path="*" element={<NotFound />} />
             <Route path="/admin" element={<AdminDashboard />} />
