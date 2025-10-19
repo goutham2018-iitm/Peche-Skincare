@@ -50,6 +50,7 @@ const ProductNavigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const navItems = [
     { name: "Home", href: "#home" },
@@ -62,6 +63,13 @@ const ProductNavigation = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+
+      // Calculate scroll progress
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(Math.min(progress, 100));
 
       const sections = ["home", "transformations", "modules", "bonuses", "faq"];
       const scrollPosition = window.scrollY + 100;
@@ -107,7 +115,7 @@ const ProductNavigation = () => {
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-700 shadow-md ${
         isScrolled
-          ? "bg-white/90 backdrop-blur-xl border-b border-orange-100"
+          ? "glass-card backdrop-blur-2xl border-b border-primary/10"
           : "bg-transparent"
       }`}
     >
@@ -156,38 +164,47 @@ const ProductNavigation = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={handleCartClick}
-              className="relative p-2 text-gray-700 hover:text-orange-600 transition-all duration-300 hover:scale-110"
+              className="relative p-2 text-gray-700 hover:text-orange-600 transition-all duration-300 hover:scale-110 magnetic"
               title="Go to Cart"
             >
               <ShoppingCart className="h-6 w-6" />
-              <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                1
-              </span>
             </button>
 
+            {/* Enhanced Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-orange-600 transition-all duration-300"
+              className="md:hidden p-1.5 sm:p-2 text-foreground hover:text-primary transition-all duration-300 hover-tilt magnetic relative"
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <div className="relative w-5 h-5 sm:w-6 sm:h-6">
+                <Menu
+                  className={`h-6 w-6 absolute transition-all duration-500 ${
+                    isMenuOpen
+                      ? "opacity-0 rotate-180 scale-50"
+                      : "opacity-100 rotate-0 scale-100"
+                  }`}
+                />
+                <X
+                  className={`h-6 w-6 absolute transition-all duration-500 ${
+                    isMenuOpen
+                      ? "opacity-100 rotate-0 scale-100"
+                      : "opacity-0 -rotate-180 scale-50"
+                  }`}
+                />
+              </div>
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Enhanced Mobile Menu - Matching First Example */}
         <div
-          className={`md:hidden transition-all duration-300 ${
+          className={`md:hidden absolute top-full left-0 w-full glass-card border-t border-primary/20 shadow-xl backdrop-blur-2xl transition-all duration-700 transform origin-top ${
             isMenuOpen
-              ? "max-h-96 opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
+              ? "opacity-100 scale-y-100 translate-y-0"
+              : "opacity-0 scale-y-95 -translate-y-2 pointer-events-none"
           }`}
         >
-          <div className="py-4 space-y-2">
-            {navItems.map((item) => (
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-1 sm:space-y-2">
+            {navItems.map((item, index) => (
               <a
                 key={item.name}
                 href={item.href}
@@ -195,27 +212,54 @@ const ProductNavigation = () => {
                   e.preventDefault();
                   handleNavClick(item.href);
                 }}
-                className={`block py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                className={`block text-foreground/80 hover:text-primary transition-all duration-500 font-medium py-2 sm:py-3 px-3 sm:px-4 rounded-lg hover:bg-primary/5 magnetic relative group ${
                   activeSection === item.href.slice(1)
-                    ? "text-orange-600 bg-orange-50"
-                    : "text-gray-700 hover:text-orange-600 hover:bg-orange-50"
+                    ? "text-primary bg-primary/5"
+                    : ""
                 }`}
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  transform: isMenuOpen ? "translateX(0)" : "translateX(-20px)",
+                  transition: `all 0.5s ease-out ${index * 0.1}s`,
+                }}
               >
                 {item.name}
+
+                {/* Mobile active indicator */}
+                <div
+                  className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-accent transition-all duration-300 ${
+                    activeSection === item.href.slice(1)
+                      ? "opacity-100"
+                      : "opacity-0 group-hover:opacity-50"
+                  }`}
+                ></div>
               </a>
             ))}
 
-            {/* Cart button in mobile menu */}
+            {/* Enhanced Cart button in mobile menu */}
             <button
               onClick={handleCartClick}
-              className="w-full text-left py-3 px-4 rounded-lg font-medium text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 flex items-center gap-2"
+              className="w-full text-left py-3 px-4 rounded-lg font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all duration-500 magnetic relative group flex items-center gap-2"
+              style={{
+                transform: isMenuOpen ? "translateY(0)" : "translateY(20px)",
+                transition: "all 0.5s ease-out 0.4s",
+              }}
             >
               <ShoppingCart className="h-5 w-5" />
               Cart (1)
+              
+              {/* Active indicator for cart */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-accent opacity-50 group-hover:opacity-100 transition-all duration-300"></div>
             </button>
           </div>
         </div>
       </div>
+
+      {/* Progress indicator */}
+      <div
+        className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-primary via-accent to-primary transform origin-left transition-all duration-300"
+        style={{ width: `${scrollProgress}%` }}
+      ></div>
     </nav>
   );
 };
@@ -308,7 +352,7 @@ const Philosophy = () => {
                   <div className="relative h-80 md:h-96 rounded-t-3xl overflow-hidden">
                     <div className="relative overflow-hidden h-full w-full bg-gradient-to-br from-orange-100/50 to-pink-100/50">
                       <img
-                        src="https://res.cloudinary.com/dwit7nxav/image/upload/v1758218622/imgonline-com-ua-twotoone-EQZcPi0Qf3aQNW_wv0xai.jpg"
+                        src="https://res.cloudinary.com/dwit7nxav/image/upload/v1760866898/imgonline-com-ua-twotoone-EQZcPi0Qf3aQNW_wv0xai_fmfzjm.avif"
                         alt="Before and After transformation"
                         className="w-full h-full object-contain object-center group-hover:scale-105 transition-all duration-500"
                       />
@@ -504,7 +548,7 @@ const ProductPage = () => {
         "I used to hide behind makeup every single day. This guide taught me that my skin didn't need more products — it needed healing.",
       timeframe: "3 weeks later",
       image:
-        "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218678/IMG_3688_ntxicl.jpg",
+        "https://res.cloudinary.com/dwit7nxav/image/upload/v1760866639/y41cdbbhb6ygqrcuhger_cse6nj.avif",
     },
     {
       name: "Keisha M.",
@@ -514,7 +558,7 @@ const ProductPage = () => {
         "Finally, a guide that understands my skin! The emotional healing part was just as important as the skincare routine.",
       timeframe: "5 weeks later",
       image:
-        "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218619/IMG_5652_bdhenw.jpg",
+        "https://res.cloudinary.com/dwit7nxav/image/upload/v1760866767/r1palriyedmdrifpxvvo_v6fulg.avif",
     },
     {
       name: "Adaora O.",
@@ -524,7 +568,7 @@ const ProductPage = () => {
         "I thought my acne dark spots were just something I had to live with. This guide completely changed my perspective.",
       timeframe: "6 weeks later",
       image:
-        "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218650/Untitled_design.zip_-_4_k47sik.png",
+        "https://res.cloudinary.com/dwit7nxav/image/upload/v1760866639/y41cdbbhb6ygqrcuhger_cse6nj.avif",
     },
   ];
 
@@ -890,46 +934,39 @@ const ProductPage = () => {
           {/* Premium Cards Grid */}
           <div className="grid md:grid-cols-2 gap-8 mb-12 md:mb-16">
             {[
-              {
-                name: "Melrose",
-                location: "Malaysia",
-                countryCode: "MY", // ISO country code
-                testimonial:
-                  "I used to think my dark spots were permanent, but this guide completely transformed how I view and treat them.",
-                timeframe: "6 weeks later",
-                image:
-                  "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218619/IMG_5649_wwilbh.jpg",
-              },
-              {
-                name: "Chinwe",
-                location: "Nigeria",
-                countryCode: "NG",
-                testimonial:
-                  "This isn't just skincare — it's soul work. The guide showed me my acne was tied to stress.",
-                timeframe: "4 weeks later",
-                image:
-                  "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218638/Untitled_design.zip_-_1_lze2nw.png",
-              },
-              {
-                name: "Aisha.",
-                location: "India",
-                countryCode: "IN",
-                testimonial:
-                  "Finally, a guide that understands my skin! The emotional healing part was just as important as the skincare routine.",
-                timeframe: "5 weeks later",
-                image:
-                  "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218619/IMG_6569_eaoxzn.jpg",
-              },
-              {
-                name: "Thando W.",
-                location: "Cape Town, SA",
-                countryCode: "ZA",
-                testimonial:
-                  "This isn't just about skincare — it's soul work. The guide helped me understand that my acne was connected to my gut health.",
-                timeframe: "4 weeks later",
-                image:
-                  "https://res.cloudinary.com/dwit7nxav/image/upload/v1758218698/Untitled_design.zip_-_3_potxtv.png",
-              },
+             {
+    name: "Melrose",
+    location: "Malaysia",
+    countryCode: "MY",
+    testimonial: "I used to think my dark spots were permanent, but this guide completely transformed how I view and treat them.",
+    timeframe: "6 weeks later",
+    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_5649_wwilbh.jpg"
+  },
+  {
+    name: "Chinwe",
+    location: "Nigeria", 
+    countryCode: "NG",
+    testimonial: "This isn't just skincare — it's soul work. The guide showed me my acne was tied to stress.",
+    timeframe: "4 weeks later",
+    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_1_lze2nw.png"
+  },
+  {
+    name: "Aisha.",
+    location: "India",
+    countryCode: "IN", 
+    testimonial: "Finally, a guide that understands my skin! The emotional healing part was just as important as the skincare routine.",
+    timeframe: "5 weeks later",
+    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_6569_eaoxzn.jpg"
+  },
+  {
+    name: "Thando W.",
+    location: "Cape Town, SA",
+    countryCode: "ZA",
+    testimonial: "This isn't just about skincare — it's soul work. The guide helped me understand that my acne was connected to my gut health.",
+    timeframe: "4 weeks later", 
+    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_3_potxtv.png"
+  }
+
             ].map((item, index) => (
               <div
                 key={index}
@@ -1316,7 +1353,7 @@ const ProductPage = () => {
                 ],
                 icon: "🖤",
                 backgroundImage:
-                  "url('https://img.freepik.com/free-photo/natural-young-woman-posing_23-2148994737.jpg')",
+                  "url('https://res.cloudinary.com/dwit7nxav/image/upload/v1760865829/natural-young-woman-posing_23-2148994737_s6alqk.avif')",
               },
               {
                 module: "Module 2",
@@ -1329,7 +1366,7 @@ const ProductPage = () => {
                 ],
                 icon: "🧬",
                 backgroundImage:
-                  "url('https://img.freepik.com/free-photo/young-lady-doing-meditation-grey-t-shirt-looking-peaceful_176474-17981.jpg')",
+                  "url('https://res.cloudinary.com/dwit7nxav/image/upload/v1760865829/young-lady-doing-meditation-grey-t-shirt-looking-peaceful_176474-17981_ivrcf5.avif')",
               },
               {
                 module: "Module 3",
@@ -1342,7 +1379,7 @@ const ProductPage = () => {
                 ],
                 icon: "💗",
                 backgroundImage:
-                  "url('https://img.freepik.com/free-photo/person-conducting-reiki-therapy_23-2149403937.jpg')",
+                  "url('https://res.cloudinary.com/dwit7nxav/image/upload/v1760865829/person-conducting-reiki-therapy_23-2149403937_mglz6k.avif')",
               },
             ].map((module, index) => (
               <div
@@ -1416,7 +1453,7 @@ const ProductPage = () => {
                 ],
                 icon: "✨",
                 backgroundImage:
-                  "url(' https://img.freepik.com/premium-photo/graceful-young-indian-woman-white-top-gently-touching-her-face_116547-100434.jpg?w=1480')",
+                  "url(' https://res.cloudinary.com/dwit7nxav/image/upload/v1760865829/graceful-young-indian-woman-white-top-gently-touching-her-face_116547-100434_pwcdza.avif')",
               },
               {
                 module: "Module 5",
@@ -1429,7 +1466,7 @@ const ProductPage = () => {
                 ],
                 icon: "💼",
                 backgroundImage:
-                  "url('https://static.vecteezy.com/system/resources/previews/007/485/896/non_2x/cropped-shot-of-tender-good-looking-woman-holds-slice-of-fresh-lemon-over-eye-recommends-organic-cosmetics-undergoes-beauty-procedures-stands-bare-shouldered-indoor-natural-treatment-concept-free-photo.jpg')",
+                  "url('https://res.cloudinary.com/dwit7nxav/image/upload/v1760865829/cropped-shot-of-tender-good-looking-woman-holds-slice-of-fresh-lemon-over-eye-recommends-organic-cosmetics-undergoes-beauty-procedures-stands-bare-shouldered-indoor-natural-treatment-concept-free-photo_ugqggq.jpg')",
               },
             ].map((module, index) => (
               <div

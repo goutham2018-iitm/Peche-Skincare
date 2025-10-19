@@ -28,7 +28,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = () => {
+   const handleClick = () => {
     const cartData = {
       amount,
       productName,
@@ -36,12 +36,32 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     };
     sessionStorage.setItem("cartData", JSON.stringify(cartData));
 
-    window.location.href = "/cart";
+    // Toast notification for successful cart addition
+    toast.success('Item successfully added to cart!', {
+      duration: 2000,
+      position: 'top-center',
+      style: {
+        background: '#10b981',
+        color: 'white',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: '500',
+      },
+      iconTheme: {
+        primary: 'white',
+        secondary: '#10b981',
+      },
+    });
+
+    // Redirect to cart page after a short delay
+    setTimeout(() => {
+      window.location.href = "/cart";
+    }, 1000);
   };
 
   return (
     <>
-      <Toaster position="top-center" />
+      {/* <Toaster position="top-center" /> */}
       <button
         onClick={handleClick}
         disabled={isLoading}
