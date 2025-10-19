@@ -309,14 +309,15 @@ const CartPage: FC = () => {
     try {
       const inrAmount = Math.round(cartData.amount * exchangeRate.USDINR);
 
-      const orderRes = await fetch(`${API_URL}/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: inrAmount,
-          currency: "INR",
-        }),
-      });
+     const orderRes = await fetch(`${API_URL}/create-order`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    amount: inrAmount,
+    currency: "INR",
+    productName: cartData.productName,
+  }),
+});
 
       if (!orderRes.ok) {
         throw new Error("Failed to create order");
