@@ -253,21 +253,30 @@ const [activeTab, setActiveTab] = useState<"payments" | "subscriptions" | "analy
   };
 
   const fetchAnalytics = async () => {
-    setAnalyticsLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/admin/analytics`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) {
-        setAnalyticsData(data.analytics);
+  setAnalyticsLoading(true);
+  setError("");
+  try {
+    const res = await fetch(`${API_URL}/admin/analytics`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    
+    const data = await res.json();
+    
+    if (data.success) {
+      setAnalyticsData(data.analytics);
+      if (data.analytics.dataStatus === 'demo') {
+        console.log('📊 Using demo analytics data');
       }
-    } catch (err) {
-      console.error("Error fetching analytics:", err);
-    } finally {
-      setAnalyticsLoading(false);
+    } else {
+      setError(data.message || "Failed to load analytics");
     }
-  };
+  } catch (err) {
+    console.error("Error fetching analytics:", err);
+    setError("Failed to connect to analytics service");
+  } finally {
+    setAnalyticsLoading(false);
+  }
+};
 const fetchSubscriptions = async () => {
   try {
     const res = await fetch(`${API_URL}/admin/subscriptions`, {
