@@ -1,4 +1,3 @@
-// src/lib/gtag.ts
 export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 declare global {
@@ -35,7 +34,6 @@ export const event = ({
   });
 };
 
-// ✅ E-commerce–specific events
 export const trackProductClick = (productName: string) => {
   event({
     action: "select_item",

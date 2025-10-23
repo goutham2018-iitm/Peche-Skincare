@@ -64,7 +64,6 @@ const ProductNavigation = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // Calculate scroll progress
       const scrollTop = window.scrollY;
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
@@ -247,7 +246,6 @@ const ProductNavigation = () => {
             >
               <ShoppingCart className="h-5 w-5" />
               Cart (1)
-              
               {/* Active indicator for cart */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-accent opacity-50 group-hover:opacity-100 transition-all duration-300"></div>
             </button>
@@ -572,14 +570,12 @@ const ProductPage = () => {
     },
   ];
 
-  // Create duplicated array for infinite scroll
   const duplicatedTestimonials = [
     ...testimonials,
     ...testimonials,
     ...testimonials,
   ];
 
-  // Update cards per view based on screen size
   useEffect(() => {
     const updateCardsPerView = () => {
       setCardsPerView(window.innerWidth >= 768 ? 2 : 1);
@@ -590,13 +586,11 @@ const ProductPage = () => {
     return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
-  // Auto-play functionality
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => {
           const nextIndex = prev + 1;
-          // Reset to beginning when we reach the end of original items
           if (nextIndex >= testimonials.length) {
             return 0;
           }
@@ -610,7 +604,6 @@ const ProductPage = () => {
     return () => clearInterval(intervalRef.current);
   }, [isPlaying, testimonials.length]);
 
-  // Smooth animation with infinite loop effect
   useEffect(() => {
     const cardWidth = 100 / cardsPerView;
     const targetX = -currentIndex * cardWidth;
@@ -673,8 +666,6 @@ const ProductPage = () => {
   const toggleFAQ = (index) => {
     setActiveFAQ(activeFAQ === index ? null : index);
   };
-  // Razorpay handler
-  // --- Razorpay script loader (keep once) ---
   useEffect(() => {
     const id = "razorpay-checkout-js";
     if (!document.getElementById(id)) {
@@ -699,11 +690,6 @@ const ProductPage = () => {
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start min-h-[60vh] lg:min-h-[70vh]">
             {/* Product Info - Now First on Mobile */}
             <div className="space-y-4 lg:space-y-8">
-              {/* <Badge className="inline-flex bg-accent/20 text-accent-foreground py-2 px-4 text-sm font-medium">
-                <Timer className="h-4 w-4 mr-2" />
-                Limited Time: 76% OFF
-              </Badge> */}
-
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                 34-Page Melanin-Rich Skin Glow Guide
                 <span className="text-primary block mt-2 text-2xl md:text-3xl lg:text-4xl">
@@ -762,15 +748,6 @@ const ProductPage = () => {
                   </div>
                 </div>
 
-                {/* Buy Button */}
-                {/* <Button
-  onClick={handleBuyNow}
-  className="w-full mt-2 md:mt-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-white font-semibold py-2 md:py-2.5 text-xs md:text-sm rounded-lg shadow-md hover:shadow-lg flex items-center justify-center gap-2"
->
-  <ShoppingCart className="h-3 w-3 md:h-4 md:w-4" />
-  Download PDF (5MB)
-  <ArrowDown className="h-3 w-3 md:h-4 md:w-4 smooth-bounce" />
-</Button> */}
                 <RazorpayButton amount={9} productName="34-Page E-book" />
 
                 {/* Features - Closer spacing between items */}
@@ -934,39 +911,46 @@ const ProductPage = () => {
           {/* Premium Cards Grid */}
           <div className="grid md:grid-cols-2 gap-8 mb-12 md:mb-16">
             {[
-             {
-    name: "Melrose",
-    location: "Malaysia",
-    countryCode: "MY",
-    testimonial: "I used to think my dark spots were permanent, but this guide completely transformed how I view and treat them.",
-    timeframe: "6 weeks later",
-    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_5649_wwilbh.jpg"
-  },
-  {
-    name: "Chinwe",
-    location: "Nigeria", 
-    countryCode: "NG",
-    testimonial: "This isn't just skincare — it's soul work. The guide showed me my acne was tied to stress.",
-    timeframe: "4 weeks later",
-    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_1_lze2nw.png"
-  },
-  {
-    name: "Aisha.",
-    location: "India",
-    countryCode: "IN", 
-    testimonial: "Finally, a guide that understands my skin! The emotional healing part was just as important as the skincare routine.",
-    timeframe: "5 weeks later",
-    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_6569_eaoxzn.jpg"
-  },
-  {
-    name: "Thando W.",
-    location: "Cape Town, SA",
-    countryCode: "ZA",
-    testimonial: "This isn't just about skincare — it's soul work. The guide helped me understand that my acne was connected to my gut health.",
-    timeframe: "4 weeks later", 
-    image: "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_3_potxtv.png"
-  }
-
+              {
+                name: "Melrose",
+                location: "Malaysia",
+                countryCode: "MY",
+                testimonial:
+                  "I used to think my dark spots were permanent, but this guide completely transformed how I view and treat them.",
+                timeframe: "6 weeks later",
+                image:
+                  "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_5649_wwilbh.jpg",
+              },
+              {
+                name: "Chinwe",
+                location: "Nigeria",
+                countryCode: "NG",
+                testimonial:
+                  "This isn't just skincare — it's soul work. The guide showed me my acne was tied to stress.",
+                timeframe: "4 weeks later",
+                image:
+                  "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_1_lze2nw.png",
+              },
+              {
+                name: "Aisha.",
+                location: "India",
+                countryCode: "IN",
+                testimonial:
+                  "Finally, a guide that understands my skin! The emotional healing part was just as important as the skincare routine.",
+                timeframe: "5 weeks later",
+                image:
+                  "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/IMG_6569_eaoxzn.jpg",
+              },
+              {
+                name: "Thando W.",
+                location: "Cape Town, SA",
+                countryCode: "ZA",
+                testimonial:
+                  "This isn't just about skincare — it's soul work. The guide helped me understand that my acne was connected to my gut health.",
+                timeframe: "4 weeks later",
+                image:
+                  "https://res.cloudinary.com/dwit7nxav/image/upload/f_auto,q_80/Untitled_design.zip_-_3_potxtv.png",
+              },
             ].map((item, index) => (
               <div
                 key={index}
@@ -1078,7 +1062,7 @@ const ProductPage = () => {
                     value={stat.value}
                     suffix={stat.suffix}
                     decimal={stat.decimal}
-                    delay={index * 200} // Stagger the animation
+                    delay={index * 200}
                   />
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -1250,7 +1234,6 @@ const ProductPage = () => {
   `}</style>
       </section>
       {/* Professional Modules Content */}
-      {/* Professional Modules Content */}
       <section
         id="modules"
         className="py-6 md:py-8 bg-gradient-to-br from-accent/5 via-background to-primary/5"
@@ -1293,9 +1276,6 @@ const ProductPage = () => {
               What's Inside -{" "}
               <span className="font-black text-primary">$264</span> Value Pack
             </h2>
-
-            {/* // Professional animated text flipper with elegant boxes - Replace your static <p> tag with this: */}
-
             <div className="text-center max-w-4xl mx-auto">
               <div className="h-24 flex items-center justify-center px-4">
                 <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-8 py-4 shadow-md hover:shadow-lg transition-all duration-300">

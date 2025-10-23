@@ -28,7 +28,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-   const handleClick = () => {
+  const handleClick = () => {
     const cartData = {
       amount,
       productName,
@@ -36,24 +36,21 @@ const RazorpayButton: FC<RazorpayButtonProps> = ({ amount, productName }) => {
     };
     sessionStorage.setItem("cartData", JSON.stringify(cartData));
 
-    // Toast notification for successful cart addition
-    toast.success('Item successfully added to cart!', {
+    toast.success("Item successfully added to cart!", {
       duration: 2000,
-      position: 'top-center',
+      position: "top-center",
       style: {
-        background: '#10b981',
-        color: 'white',
-        borderRadius: '8px',
-        fontSize: '14px',
-        fontWeight: '500',
+        background: "#10b981",
+        color: "white",
+        borderRadius: "8px",
+        fontSize: "14px",
+        fontWeight: "500",
       },
       iconTheme: {
-        primary: 'white',
-        secondary: '#10b981',
+        primary: "white",
+        secondary: "#10b981",
       },
     });
-
-    // Redirect to cart page after a short delay
     setTimeout(() => {
       window.location.href = "/cart";
     }, 1000);
@@ -192,7 +189,6 @@ const CartPage: FC = () => {
     document.body.appendChild(script);
 
     return () => {
-      // Cleanup script on unmount
       if (document.body.contains(script)) {
         document.body.removeChild(script);
       }
@@ -309,15 +305,15 @@ const CartPage: FC = () => {
     try {
       const inrAmount = Math.round(cartData.amount * exchangeRate.USDINR);
 
-     const orderRes = await fetch(`${API_URL}/create-order`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    amount: inrAmount,
-    currency: "INR",
-    productName: cartData.productName,
-  }),
-});
+      const orderRes = await fetch(`${API_URL}/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: inrAmount,
+          currency: "INR",
+          productName: cartData.productName,
+        }),
+      });
 
       if (!orderRes.ok) {
         throw new Error("Failed to create order");
@@ -384,7 +380,6 @@ const CartPage: FC = () => {
                   }
                 );
 
-                // Clear cart and redirect after success
                 setTimeout(() => {
                   sessionStorage.removeItem("cartData");
                   window.location.href = "/";

@@ -1,10 +1,15 @@
-// src/App.tsx
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Outlet,
+} from "react-router-dom";
 import ProductPage from "./pages/ProductPage";
 import NotFound from "./pages/NotFound";
 import Footer from "./components/Footer";
@@ -20,8 +25,6 @@ import { CartPage } from "./components/RazorpayButton";
 import { pageview, GA_MEASUREMENT_ID } from "./lib/gtag";
 
 const queryClient = new QueryClient();
-
-// Track route changes
 const RouteTracker = () => {
   const location = useLocation();
   useEffect(() => {
@@ -79,7 +82,10 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/cancellation-refunds" element={<CancellationRefunds />} />
+            <Route
+              path="/cancellation-refunds"
+              element={<CancellationRefunds />}
+            />
             <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Route>
@@ -94,45 +100,3 @@ const App = () => (
 );
 
 export default App;
-
-
-
-
-
-
-// import { Toaster } from "@/components/ui/toaster";
-// import { Toaster as Sonner } from "@/components/ui/sonner";
-// import { TooltipProvider } from "@/components/ui/tooltip";
-// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Index from "./pages/Index";
-// import ProductDetail from "./pages/ProductDetail";
-// import ProductPage from "./pages/ProductPage";
-// import NotFound from "./pages/NotFound";
-// import { useScrollAnimation } from "./hooks/useScrollAnimation";
-
-// const queryClient = new QueryClient();
-
-// const AppContent = () => {
-//   useScrollAnimation();
-//   return <Index />;
-// };
-
-// const App = () => (
-//   <QueryClientProvider client={queryClient}>
-//     <TooltipProvider>
-//       <Toaster />
-//       <Sonner />
-//       <BrowserRouter>
-//         <Routes>
-//   <Route path="/product" element={<AppContent />} />
-//   <Route path="/product/:id" element={<ProductDetail />} />
-//   <Route path="*" element={<NotFound />} />
-// </Routes>
-
-//       </BrowserRouter>
-//     </TooltipProvider>
-//   </QueryClientProvider>
-// );
-
-// export default App;
